@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     goto error_out;
   }
   fprintf(stderr, "Success parsing %d tokens\r\n", nJSParse);
-  fprintf(stderr, "Memusage: %dkb (%d%%)\r\n", (sizeof(jsmntok_t) * (unsigned int)nJSParse / 1024), ((100 * (unsigned int)nJSParse) / jsmn_tokens_size));
+  fprintf(stderr, "Memusage: %lukb (%u%%)\r\n", (sizeof(jsmntok_t) * (unsigned int)nJSParse / 1024), ((100 * (unsigned int)nJSParse) / jsmn_tokens_size));
 
 
   /* Different print methods */

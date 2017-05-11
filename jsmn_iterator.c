@@ -4,7 +4,7 @@
 /**
  * @brief Takes an JSMN Array/Object and locates index for last item in collection
  * @details Iterates over JSMN Array/Object until last item is found
- * 
+ *
  * @param jsmn_tokens   JSMN tokens
  * @param jsmn_len      JSMN token count
  * @param parser_pos    Current JSMN token
@@ -24,7 +24,7 @@ int jsmn_iterator_find_last( jsmntok_t *jsmn_tokens, unsigned int jsmn_len, unsi
   if (parser_pos >= jsmn_len)
     return JSMNITER_ERR_PARAMETER;
   /* Not an Array/Object */
-  if (jsmn_tokens[parser_pos].type != JSMN_ARRAY && 
+  if (jsmn_tokens[parser_pos].type != JSMN_ARRAY &&
       jsmn_tokens[parser_pos].type != JSMN_OBJECT)
     return JSMNITER_ERR_TYPE;
 
@@ -33,7 +33,7 @@ int jsmn_iterator_find_last( jsmntok_t *jsmn_tokens, unsigned int jsmn_len, unsi
 
   /* First child item */
   child_index = parser_pos + 1;
-  
+
   /* Count number of children we need to iterate */
   child_count = jsmn_tokens[parser_pos].size * (jsmn_tokens[parser_pos].type == JSMN_OBJECT ? 2 : 1);
 
@@ -61,12 +61,12 @@ int jsmn_iterator_find_last( jsmntok_t *jsmn_tokens, unsigned int jsmn_len, unsi
 /**
  * @brief Initialize iterator
  * @details Set initial value for iterator struct
- * 
+ *
  * @param iterator      Iterator struct
  * @param jsmn_tokens   JSMN tokens
  * @param jsmn_len      JSMN token count
  * @param parser_pos    Current JSMN token
- * 
+ *
  * @return  < 0 - Error has occured, corresponds to one of JSMNITER_ERR_*
  *          >=0 - Ok
  */
@@ -81,7 +81,7 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
   if (parser_pos >= jsmn_len)
     return JSMNITER_ERR_PARAMETER;
   /* Not an Array/Object */
-  if (jsmn_tokens[parser_pos].type != JSMN_ARRAY && 
+  if (jsmn_tokens[parser_pos].type != JSMN_ARRAY &&
       jsmn_tokens[parser_pos].type != JSMN_OBJECT)
     return JSMNITER_ERR_TYPE;
 
@@ -100,18 +100,18 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
 /**
  * @brief Get next item in JSMN Array/Object
  * @details Gets JSMN position for next identifier and value in Array/Object
- * 
+ *
  * @param iterator            Iterator struct
  * @param jsmn_identifier     Return pointer for identifier, NULL for Array
  * @param jsmn_value          Return pointer for value
  * @param next_value_index    Possible to indicate where next value begins, allows determine end of sub
  *                            Array/Object withouth manually searching for it
- * 
+ *
  * @return  < 0 - Error has occured, corresponds to one of JSMNITER_ERR_*
  *            0 - No more values
  *          > 0 - Value (and identifier) has been returned
  */
- int jsmn_iterator_next(jsmn_iterator_t *iterator, jsmntok_t **jsmn_identifier, jsmntok_t **jsmn_value, 
+ int jsmn_iterator_next(jsmn_iterator_t *iterator, jsmntok_t **jsmn_identifier, jsmntok_t **jsmn_value,
                         unsigned int next_value_index) {
   unsigned int is_object;
   jsmntok_t *parent_item;
@@ -156,7 +156,7 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
   }
   /* Check if next_value_index is correct, else we need to calculate it ourself */
   else if (next_value_index == 0 ||
-           next_value_index > jsmn_len || 
+           next_value_index > jsmn_len ||
            next_value_index <= jsmn_iterator_position(iterator) ||
            current_item->end < jsmn_tokens[next_value_index - 1].end ||
            (next_value_index < jsmn_len && current_item->end >= jsmn_tokens[next_value_index].start)) {
@@ -166,7 +166,7 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
     /* Error, bail out */
     if (return_pos < 0)
       return return_pos;
-  
+
     /* Update position to the next item token */
     next_value_index = (unsigned int)(return_pos) + 1;
 
@@ -211,7 +211,7 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
     /* Missing identifier pointer */
     if (!jsmn_identifier)
       return JSMNITER_ERR_PARAMETER;
-    
+
     /* Set identifier and update current pointer to value item */
     *jsmn_identifier = current_item;
     next_value_index++;
@@ -221,7 +221,7 @@ int jsmn_iterator_init(jsmn_iterator_t *iterator, jsmntok_t *jsmn_tokens, unsign
   else if (jsmn_identifier) {
     *jsmn_identifier = NULL;
   }
-  
+
   /* Set value */
   *jsmn_value = current_item;
 

@@ -48,7 +48,6 @@ int test_object(void) {
 				JSMN_STRING, "b", 1,
 				JSMN_STRING, "c", 0));
 
-#ifdef JSMN_STRICT
 	check(parse("{\"a\"\n0}", JSMN_ERROR_INVAL, 3));
 	check(parse("{\"a\", 0}", JSMN_ERROR_INVAL, 3));
 	check(parse("{\"a\": {2}}", JSMN_ERROR_INVAL, 3));
@@ -61,7 +60,6 @@ int test_object(void) {
 	/*check(parse("{\"a\":1,}", JSMN_ERROR_INVAL, 4));*/
 	/*check(parse("{\"a\":\"b\":\"c\"}", JSMN_ERROR_INVAL, 4));*/
 	/*check(parse("{,}", JSMN_ERROR_INVAL, 4));*/
-#endif
 	return 0;
 }
 
@@ -165,7 +163,6 @@ int test_partial_string(void) {
 }
 
 int test_partial_array(void) {
-#ifdef JSMN_STRICT
 	int r;
 	int i;
 	jsmn_parser p;
@@ -188,7 +185,6 @@ int test_partial_array(void) {
 			check(r == JSMN_ERROR_PART);
 		}
 	}
-#endif
 	return 0;
 }
 
@@ -224,23 +220,6 @@ int test_array_nomem(void) {
 }
 
 int test_unquoted_keys(void) {
-#ifndef JSMN_STRICT
-	int r;
-	jsmn_parser p;
-	jsmntok_t tok[10];
-	const char *js;
-
-	jsmn_init(&p);
-	js = "key1: \"value\"\nkey2 : 123";
-
-	r = jsmn_parse(&p, js, strlen(js), tok, 10);
-	check(r >= 0);
-	check(tokeq(js, tok, 4,
-				JSMN_PRIMITIVE, "key1",
-				JSMN_STRING, "value", 0,
-				JSMN_PRIMITIVE, "key2",
-				JSMN_PRIMITIVE, "123"));
-#endif
 	return 0;
 }
 
@@ -338,30 +317,6 @@ int test_count(void) {
 
 
 int test_nonstrict(void) {
-#ifndef JSMN_STRICT
-	const char *js;
-	js = "a: 0garbage";
-	check(parse(js, 2, 2,
-				JSMN_PRIMITIVE, "a",
-				JSMN_PRIMITIVE, "0garbage"));
-
-	js = "Day : 26\nMonth : Sep\n\nYear: 12";
-	check(parse(js, 6, 6,
-				JSMN_PRIMITIVE, "Day",
-				JSMN_PRIMITIVE, "26",
-				JSMN_PRIMITIVE, "Month",
-				JSMN_PRIMITIVE, "Sep",
-				JSMN_PRIMITIVE, "Year",
-				JSMN_PRIMITIVE, "12"));
-
-	//nested {s don't cause a parse error.
-	js = "\"key {1\": 1234";
-	check(parse(js, 2, 2,
-		              JSMN_STRING, "key {1", 1,
-		              JSMN_PRIMITIVE, "1234"));
-
-
-#endif
 	return 0;
 }
 
