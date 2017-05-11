@@ -267,7 +267,8 @@ int print_tree(const char *psz, jsmntok_t *jsmn_tokens, unsigned int jsmn_len, u
 
 
 void print_usage() {
-  fprintf(stdout, "%s [<filename>] [json|json_jsmn|raw_jsmn|simple]\r\n", "jsonprint");
+  fprintf(stdout, "%s [json|json_jsmn|raw_jsmn|simple] <filename>\r\n", "jsonprint");
+  fprintf(stdout, " filename:  The file to parse, if no file specified use stdin\r\n");
   fprintf(stdout, " json:      Indented JSON\r\n");
   fprintf(stdout, " json_jsmn: Indented JSON with JSMN info\r\n");
   fprintf(stdout, " raw_jsmn:  Raw JSMN info\r\n");
@@ -288,12 +289,8 @@ int main(int argc, char *argv[])
   unsigned int file_data_len = 0;
   char *file_data = NULL;
   char *file_name = NULL;
+  FILE *fp = NULL;
   char *print_type = "json";
-
-  if (argc < 2) {
-    print_usage();
-    return 0;
-  }
 
   if ((jsmn_tokens = (jsmntok_t*)malloc(sizeof(jsmntok_t) * jsmn_tokens_size)) == NULL)
     goto error_out;
@@ -301,23 +298,26 @@ int main(int argc, char *argv[])
   if ((file_data = (char*)malloc(sizeof(char) * file_data_size)) == NULL)
     goto error_out;
 
-  file_name = argv[1];
-  if (argc >= 3)
-    print_type = argv[2];
+  if (argc >= 2)
+    print_type = argv[1];
 
-  {
-    FILE *fp = fopen(file_name, "rb");
-    if (!fp) {
+  if (argc >= 3) {
+    file_name = argv[2];
+    fp = fopen(file_name, "rb");
+  }
+  else {
+    fp = stdin;
+  }
+
+  if (!fp) {
       fprintf(stderr, "Unable to open file \"%s\"\r\n", file_name);
       goto error_out;
-    }
-    file_data_len = fread(file_data, sizeof(char), file_data_size, fp);
-    fclose(fp);
-  
-    if (file_data_len == file_data_size) {
-      fprintf(stderr, "Buffer to small\r\n");
-      goto error_out;
-    }
+  }
+  file_data_len = fread(file_data, sizeof(char), file_data_size, fp);
+  if (NULL != file_name) fclose(fp);
+  if (file_data_len == file_data_size) {
+   fprintf(stderr, "Buffer to small\r\n");
+    goto error_out;
   }
 
   /* Prepare parser */

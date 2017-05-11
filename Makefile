@@ -40,8 +40,16 @@ fuzz_default:
 	afl-gcc example/jsondump.c jsmn.c jsmn_iterator.c -o test/$@ $(CFLAGS) $(LDFLAGS)
 	afl-fuzz -i ./test/corpora/ -o ./test/fuzz ./test/$@
 
-fuzz_coverage:
+fuzz_iterator:
+	afl-gcc example/jsonprint.c jsmn.c jsmn_iterator.c -o test/$@ $(CFLAGS) $(LDFLAGS)
+	afl-fuzz -i ./test/corpora/ -o ./test/fuzz ./test/$@
+
+fuzz_default_lcov:
 	afl-gcc example/jsondump.c jsmn.c jsmn_iterator.c -o test/$@ $(CFLAGS) $(LDFLAGS) -coverage
+	afl-fuzz -i ./test/corpora/ -o ./test/fuzz ./test/$@
+
+fuzz_iterator_lcov:
+	afl-gcc example/jsonprint.c jsmn.c jsmn_iterator.c -o test/$@ $(CFLAGS) $(LDFLAGS) -coverage
 	afl-fuzz -i ./test/corpora/ -o ./test/fuzz ./test/$@
 
 coverage:
