@@ -45,7 +45,8 @@ static int jsmn_parse_primitive(jsmn_parser *parser, const char *js,
 			case ','  : case ']'  : case '}' :
 				goto found;
 		}
-		if (js[parser->pos] < 32 || js[parser->pos] >= 127) {
+		/* ascii char from + to u ie -1e+9 or true/false/null are valid ref. json.org */
+		if (js[parser->pos] < 43 || js[parser->pos] > 117) {
 			parser->pos = start;
 			return JSMN_ERROR_INVAL;
 		}
