@@ -97,6 +97,13 @@ int test_primitive(void) {
 				JSMN_OBJECT, -1, -1, 1,
 				JSMN_STRING, "floatVar", 1,
 				JSMN_PRIMITIVE, "12.345"));
+	check(parse("{\"floatVar\" : -12E+32}", 3, 3,
+				JSMN_OBJECT, -1, -1, 1,
+				JSMN_STRING, "floatVar", 1,
+				JSMN_PRIMITIVE, "-12E+32"));
+
+	check(parse("{\"floatVar\" : 12o+32}", JSMN_ERROR_INVAL, 3));
+
 	return 0;
 }
 

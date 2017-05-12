@@ -40,16 +40,24 @@ static int jsmn_parse_primitive(jsmn_parser *parser, const char *js,
 	for (; parser->pos < len && js[parser->pos] != '\0'; parser->pos++) {
 		switch (js[parser->pos]) {
 			/* In strict mode primitive must be followed by "," or "}" or "]" */
-			case ':':
 			case '\t' : case '\r' : case '\n' : case ' ' :
 			case ','  : case ']'  : case '}' :
 				goto found;
 		}
-		/* ascii char from + to u ie -1e+9 or true/false/null are valid ref. json.org */
-		if (js[parser->pos] < 43 || js[parser->pos] > 117) {
-			parser->pos = start;
-			return JSMN_ERROR_INVAL;
+		/* using json.org spec 0..9 true/false/null -1E+12/0.1234 are all primitive cases */
+		if (js[parser->pos] >= 48 && js[parser->pos] <= 57) {
+			continue;
 		}
+		switch(js[parser->pos]) {
+			case 't': case 'r' : case 'u' : case 'e': /*true*/
+			case 'f': case 'a' : case 'l' : case 's': /*false*/
+			case 'n':				  /*null*/
+			case '+' : case '-': case 'E' : case '.': /* -1E+3 or 0.1234*/
+				continue;
+				break;
+		}
+		parser->pos = start;
+		return JSMN_ERROR_INVAL;
 	}
 	/* In strict mode primitive must be followed by a comma/object/array */
 	parser->pos = start;
